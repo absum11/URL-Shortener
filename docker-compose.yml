@@ -1,0 +1,26 @@
+version: "3.3"
+
+services:
+  backend:
+    build: .
+    container_name: node-express-app
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=local
+    volumes:
+      - .:/app
+      - /app/node_modules
+    restart: always
+  
+  redis:
+    image: redis:alpine
+    container_name: redis-server
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: always
+
+volumes:
+  redis_data:
