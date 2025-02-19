@@ -1,0 +1,16 @@
+# Ignore artifacts:
+build
+coverage
+node_modules
+package-lock.json
+
+
+# Docker & Deployment Files (Exclude from Prettier)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Ignore Prettier Ignore Itself
+.prettierignore
+
+config.yaml

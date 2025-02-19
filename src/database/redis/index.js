@@ -1,29 +1,33 @@
 const Redis = require("ioredis");
 const { redis: redisConfig } = require("../../config");
 
-class RedisSingleton {
-    constructor() {
-        if (!RedisSingleton.instance) {
-            RedisSingleton.instance = new Redis({
-                host: redisConfig.host,
-                port: redisConfig.port,
-            });
+class RedisClient {
+	constructor() {
+		if (!RedisClient.instance) {
+			RedisClient.instance = new Redis({
+				host: redisConfig.host,
+				port: redisConfig.port
+			});
 
-            // Redis event listeners
-            RedisSingleton.instance.on("connect", () => console.log("Connected to Redis"));
-            RedisSingleton.instance.on("error", (err) => console.error("Redis Error:", err));
-        }
+			// Redis event listeners
+			RedisClient.instance.on("connect", () =>
+				console.log("Connected to Redis")
+			);
+			RedisClient.instance.on("error", (err) =>
+				console.error("Redis Error:", err)
+			);
+		}
 
-        return RedisSingleton.instance;
-    }
+		return RedisClient.instance;
+	}
 }
 
-// Export the same instance always
-const redisClient = new RedisSingleton();
+//leveraging Singleton design pattern: Export the same instance always
+const redisClient = new RedisClient();
 module.exports = redisClient;
 
 // todos
-// learn docker and docker-compose    sdone
+// learn docker and docker-compose    done
 // make this redis client singleton   done
 // add redis caching layer to service   done
 // bring up a mongodb connection and perform read write using it

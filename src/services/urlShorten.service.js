@@ -1,40 +1,47 @@
 const { v4: uuidv4 } = require("uuid");
 const { urlShortenerConfig } = require("../config");
 const redisClient = require("../database/redis");
+const { UrlStore } = require('../database/mongodb/url-model')
 
-const sourceToShortenedUrlMapping = {};
-const shortenedToSourceUrlMapping = {};
+// const sourceToShortenedUrlMapping = {};
+// const shortenedToSourceUrlMapping = {};
 
-const urlShortenService = (url) => {
-  if (sourceToShortenedUrlMapping[url] != undefined) {
-    return `${urlShortenerConfig.baseUrl}${sourceToShortenedUrlMapping[url]}`;
-  }
-  const shortenedUrl = uuidv4();
-  sourceToShortenedUrlMapping[url] = shortenedUrl;
-  shortenedToSourceUrlMapping[shortenedUrl] = url;
-  return `${urlShortenerConfig.baseUrl}${shortenedUrl}`;
+const urlShortenService = async (url) => {
+
+  // check if url exists in db
+  const existingUrl = await UrlStore.findOne({url});
+	if (existingUrl) {
+		return `${urlShortenerConfig.baseUrl}${existingUrl.shortId}`;
+	}
+
+  // create entry in collection if not found
+	const shortenedUrlId = uuidv4();
+  await UrlStore.create({ shortenedUrlId, url});
+
+	return `${urlShortenerConfig.baseUrl}${shortenedUrlId}`;
 };
 
 const urlRedirectService = async (url) => {
-  //extract id from url
-  const id = url.split(urlShortenerConfig.baseUrl)[0];
-  console.log(id);
+	//extract id from url
+	const shortId = url.split(urlShortenerConfig.baseUrl)[0];
+	console.log(shortId);
 
-  // check if redis cache contains mapping
-  const cachedSourceUrl = await redisClient.get(id);
-  if (cachedSourceUrl) {
-    console.log("cache hit");
-    return cachedSourceUrl;
-  }
+	// check if redis cache contains mapping
+	const cachedSourceUrl = await redisClient.get(shortId);
+	if (cachedSourceUrl) {
+		console.log("cache hit");
+		return cachedSourceUrl;
+	}
 
-  // if not found , check in memory and add to redis cache for next ref
-  if (shortenedToSourceUrlMapping[id] != undefined) {
-    const sourceUrl = shortenedToSourceUrlMapping[id];
-    await redisClient.setex(id, 86400, sourceUrl);
-    console.log("cache miss");
-    return sourceUrl;
-  }
-  return undefined;
+	// if not found , check in database and add to redis cache for next ref
+  const source = await UrlStore.findOne({shortId});
+	if (source) {
+		// const sourceUrl = shortenedToSourceUrlMapping[shortId];
+		await redisClient.setex(shortId, 86400, source.longUrl);
+		console.log("cache miss");
+		return source.longUrl;
+	}
+	return undefined;
 };
 
 module.exports = { urlShortenService, urlRedirectService };

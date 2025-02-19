@@ -3,3 +3,8 @@ npm-debug.log
 Dockerfile
 .dockerignore
 .git
+.gitignore
+
+# Ignore Prettier-related files
+.prettierignore
+.prettierrc

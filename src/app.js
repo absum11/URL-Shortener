@@ -10,14 +10,14 @@ app.use(express.json());
 
 //enable cors for all origins
 if (config.cors.enabled) {
-  app.use(
-    cors({
-      origin: config.cors.origin,
-      methods: config.cors.methods,
-      allowedHeaders: config.cors.headers,
-      credentials: config.cors.credentials,
-    })
-  );
+	app.use(
+		cors({
+			origin: config.cors.origin,
+			methods: config.cors.methods,
+			allowedHeaders: config.cors.headers,
+			credentials: config.cors.credentials
+		})
+	);
 }
 
 app.use("/", router);

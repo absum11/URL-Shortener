@@ -4,7 +4,7 @@ server:
     port: 8080
 
 url_shortener:
-  base_url: "http://localhost:8080/"    
+  base_url: "http://localhost:8080/"
   black_list:
     domains:
       - "naughtyamerica.com"
@@ -13,11 +13,16 @@ url_shortener:
 
 cors:
   enabled: true
-  origin: "*"  #specific origins when needed
+  origin: "*" #specific origins when needed
   methods: "GET,POST,PUT,DELETE"
-  headers: ["Content-Type","Authorization"]
+  headers: ["Content-Type", "Authorization"]
   credentials: true
 
 redis:
-  host: "localhost"
+  host: "redis"
   port: 6379
+
+mongodb:
+  host: "mongo"
+  port: 27017
+  database: "urlShortener"
