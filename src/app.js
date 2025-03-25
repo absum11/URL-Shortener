@@ -2,6 +2,7 @@ const express = require("express");
 const router = require("./router");
 const cors = require("cors");
 const config = require("./config");
+const connectMongo = require("./database/mongodb"); // import mongodb connection
 
 const app = express();
 
@@ -19,6 +20,9 @@ if (config.cors.enabled) {
 		})
 	);
 }
+
+// connect to mongo
+connectMongo();
 
 app.use("/", router);
 

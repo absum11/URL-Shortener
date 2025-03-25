@@ -26,13 +26,3 @@ class RedisClient {
 const redisClient = new RedisClient();
 module.exports = redisClient;
 
-// todos
-// learn docker and docker-compose    done
-// make this redis client singleton   done
-// add redis caching layer to service   done
-// bring up a mongodb connection and perform read write using it
-// 10 linked-list questions
-// prettier integrate          done
-//  pre-commit hooks
-//  integrate bearer
-// integrate auth

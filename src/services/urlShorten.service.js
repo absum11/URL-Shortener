@@ -1,24 +1,27 @@
 const { v4: uuidv4 } = require("uuid");
 const { urlShortenerConfig } = require("../config");
 const redisClient = require("../database/redis");
-const { UrlStore } = require('../database/mongodb/url-model')
+const { UrlStore } = require("../database/mongodb/url-model");
 
 // const sourceToShortenedUrlMapping = {};
 // const shortenedToSourceUrlMapping = {};
 
-const urlShortenService = async (url) => {
-
-  // check if url exists in db
-  const existingUrl = await UrlStore.findOne({url});
+const urlShortenService = async (longUrl) => {
+	// check if url exists in db
+	const existingUrl = await UrlStore.findOne({ longUrl });
 	if (existingUrl) {
 		return `${urlShortenerConfig.baseUrl}${existingUrl.shortId}`;
 	}
 
-  // create entry in collection if not found
-	const shortenedUrlId = uuidv4();
-  await UrlStore.create({ shortenedUrlId, url});
-
-	return `${urlShortenerConfig.baseUrl}${shortenedUrlId}`;
+	// create entry in collection if not found
+	try {
+		const shortId = uuidv4();
+		const result = await UrlStore.create({ shortId, longUrl });
+		console.log("Inserted into MongoDB:", result);
+		return `${urlShortenerConfig.baseUrl}${shortId}`;
+	} catch(error){
+		console.error("MongoDB Insert Error:", error);
+	}
 };
 
 const urlRedirectService = async (url) => {
@@ -34,7 +37,7 @@ const urlRedirectService = async (url) => {
 	}
 
 	// if not found , check in database and add to redis cache for next ref
-  const source = await UrlStore.findOne({shortId});
+	const source = await UrlStore.findOne({ shortId });
 	if (source) {
 		// const sourceUrl = shortenedToSourceUrlMapping[shortId];
 		await redisClient.setex(shortId, 86400, source.longUrl);
