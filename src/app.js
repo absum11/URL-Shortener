@@ -1,29 +1,51 @@
 const express = require("express");
-const router = require("./router");
 const cors = require("cors");
 const config = require("./config");
-const connectMongo = require("./database/mongodb"); // import mongodb connection
+const connectMongo = require("./database/mongodb");
+const router = require("./router");
 
-const app = express();
+class Server {
+  constructor() {
+    this.app = express();
+    this.port = config.server.http.port;
+    this.initMiddleware();
+    this.initDatabase();
+    this.initRoutes();
+  }
 
-// Middleware to parse JSON requests
-app.use(express.json());
+  initMiddleware() {
+    this.app.use(express.json()); // JSON parsing
 
-//enable cors for all origins
-if (config.cors.enabled) {
-	app.use(
-		cors({
-			origin: config.cors.origin,
-			methods: config.cors.methods,
-			allowedHeaders: config.cors.headers,
-			credentials: config.cors.credentials
-		})
-	);
+    // Enable CORS if configured
+    if (config.cors.enabled) {
+      this.app.use(
+        cors({
+          origin: config.cors.origin,
+          methods: config.cors.methods,
+          allowedHeaders: config.cors.headers,
+          credentials: config.cors.credentials,
+        })
+      );
+    }
+  }
+
+  initDatabase() {
+    connectMongo(); // Connect to MongoDB
+  }
+
+  initRoutes() {
+    this.app.use("/", router); // Load all routes
+  }
+
+  start() {
+    this.app.listen(this.port, () => {
+		console.log(`Server is running on http://localhost:${this.port}`);
+    });
+  }
+
+  getAppInstance() {
+    return this.app;
+  }
 }
 
-// connect to mongo
-connectMongo();
-
-app.use("/", router);
-
-module.exports = app;
+module.exports = Server;

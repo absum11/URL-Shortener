@@ -1,8 +1,7 @@
-const app = require("./src/app");
-const config = require("./src/config");
-const port = config.server.http.port;
+const Server = require('./src/app')
+
+// server instance
+const server = new Server();
 
 // Start the server
-app.listen(port, () => {
-	console.log(`Server is running on http://localhost:${port}`);
-});
+server.start();
