@@ -25,4 +25,3 @@ class RedisClient {
 //leveraging Singleton design pattern: Export the same instance always
 const redisClient = new RedisClient();
 module.exports = redisClient;
-

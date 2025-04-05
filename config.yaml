@@ -2,6 +2,8 @@ server:
   env: "local"
   http:
     port: 8080
+  jwt:
+    secret: "s@f3&Secr3t_K3y_With$omeRand0mStuff123456"  
 
 url_shortener:
   base_url: "http://localhost:8080/"

@@ -1,5 +1,5 @@
 const express = require("express");
-const { urlShortenController } = require("../controllers");
+const { urlShortenController } = require("../controllers/url.controller");
 const {
 	validateUrlMiddleware,
 	blacklistedDomainMiddleware

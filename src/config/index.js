@@ -10,6 +10,9 @@ module.exports = {
 		env: config.server.env,
 		http: {
 			port: config.server.http.port
+		},
+		jwt: {
+			secret: config.server.jwt.secret
 		}
 	},
 	urlShortenerConfig: {
@@ -29,10 +32,9 @@ module.exports = {
 		host: config.redis.host,
 		port: config.redis.port
 	},
-  mongodb: {
-    host: config.mongodb.host,
-    port: config.mongodb.port,
-    database: config.mongodb.database
-  }
-
+	mongodb: {
+		host: config.mongodb.host,
+		port: config.mongodb.port,
+		database: config.mongodb.database
+	}
 };

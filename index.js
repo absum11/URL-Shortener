@@ -1,4 +1,4 @@
-const Server = require('./src/app')
+const Server = require("./src/app");
 
 // server instance
 const server = new Server();

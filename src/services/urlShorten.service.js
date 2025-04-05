@@ -19,7 +19,7 @@ const urlShortenService = async (longUrl) => {
 		const result = await UrlStore.create({ shortId, longUrl });
 		console.log("Inserted into MongoDB:", result);
 		return `${urlShortenerConfig.baseUrl}${shortId}`;
-	} catch(error){
+	} catch (error) {
 		console.error("MongoDB Insert Error:", error);
 	}
 };
