@@ -19,6 +19,7 @@
 		"ioredis": "^5.5.0",
 		"jsonwebtoken": "^9.0.2",
 		"mongoose": "^8.10.0",
+		"nanoid": "^3.3.11",
 		"uuid": "^11.0.5",
 		"yaml": "^2.7.0"
 	},

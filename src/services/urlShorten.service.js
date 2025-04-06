@@ -1,10 +1,7 @@
-const { v4: uuidv4 } = require("uuid");
+const { nanoid } = require("nanoid");
 const { urlShortenerConfig } = require("../config");
 const redisClient = require("../database/redis");
 const { UrlStore } = require("../database/mongodb/url-model");
-
-// const sourceToShortenedUrlMapping = {};
-// const shortenedToSourceUrlMapping = {};
 
 const urlShortenService = async (longUrl) => {
 	// check if url exists in db
@@ -15,7 +12,7 @@ const urlShortenService = async (longUrl) => {
 
 	// create entry in collection if not found
 	try {
-		const shortId = uuidv4();
+		const shortId = nanoid(10);
 		const result = await UrlStore.create({ shortId, longUrl });
 		console.log("Inserted into MongoDB:", result);
 		return `${urlShortenerConfig.baseUrl}${shortId}`;
@@ -24,10 +21,7 @@ const urlShortenService = async (longUrl) => {
 	}
 };
 
-const urlRedirectService = async (url) => {
-	//extract id from url
-	const shortId = url.split(urlShortenerConfig.baseUrl)[0];
-	console.log(shortId);
+const urlRedirectService = async (shortId) => {
 
 	// check if redis cache contains mapping
 	const cachedSourceUrl = await redisClient.get(shortId);
@@ -48,6 +42,3 @@ const urlRedirectService = async (url) => {
 };
 
 module.exports = { urlShortenService, urlRedirectService };
-
-// https://facebook.com/
-// https://eg.com/shortendUrl
