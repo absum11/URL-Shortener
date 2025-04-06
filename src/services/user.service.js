@@ -1,34 +1,15 @@
-const {User} = require("../database/mongodb/url-model");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const config = require("../config");
+const { UrlStore } = require("../database/mongodb/url-model");
 
-const newUserService = async (email, password) => {
-	if (!email || !password) throw new Error("both fields required");
-
-	const existingUser = await User.findOne({ email });
-	if (existingUser) throw new Error("user already exists");
-
-	//hash password and store user creds
-	const hashedPass = await bcrypt.hash(password, 10);
-	return await User.create({ email, password : hashedPass });
+const getUserUrlsService = async (userId) => {
+	const urls = await UrlStore.find({ userId }).sort({ createdAt: -1 });
+    return urls;
 };
 
-const loginService = async (email, password) => {
-	if (!email || !password) throw new Error("both fields required");
+const deleteUserUrlService = async (id, userId)=>{
+    const url = await UrlStore.findOne({ _id: id, userId });
+    if(!url) throw new Error("url not found");
 
-	const user = await User.findOne({ email });
-	if (!user) throw new Error("user not found");
+    await UrlStore.deleteOne({ _id: id, userId });
+ }
 
-	const matchPassword = await bcrypt.compare(password, user.password);
-	if (!matchPassword) throw new Error("invalid creds");
-
-	const token = jwt.sign(
-		{ userId: user._id, email: user.email },
-		config.server.jwt.secret,
-		{ expiresIn: "1d" }
-	);
-	return { user, token };
-};
-
-module.exports = { newUserService, loginService };
+module.exports = { getUserUrlsService, deleteUserUrlService };
