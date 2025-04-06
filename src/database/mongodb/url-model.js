@@ -17,6 +17,7 @@ const userSchema = new mongoose.Schema({
 const urlSchema = new mongoose.Schema({
 	shortId: { type: String, required: true, unique: true },
 	longUrl: { type: String, required: true },
+	userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 	createdAt: { type: Date, default: Date.now }
 });
 

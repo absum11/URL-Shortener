@@ -3,9 +3,9 @@ const { urlShortenerConfig } = require("../config");
 const redisClient = require("../database/redis");
 const { UrlStore } = require("../database/mongodb/url-model");
 
-const urlShortenService = async (longUrl) => {
+const urlShortenService = async (longUrl, userId = null) => {
 	// check if url exists in db
-	const existingUrl = await UrlStore.findOne({ longUrl });
+	const existingUrl = await UrlStore.findOne({ longUrl,userId });
 	if (existingUrl) {
 		return `${urlShortenerConfig.baseUrl}${existingUrl.shortId}`;
 	}
@@ -13,7 +13,11 @@ const urlShortenService = async (longUrl) => {
 	// create entry in collection if not found
 	try {
 		const shortId = nanoid(10);
-		const result = await UrlStore.create({ shortId, longUrl });
+		const result = await UrlStore.create({ 
+			shortId,
+			 longUrl,
+			 ...(userId && { userId })    //equivalent to userId? {shortID, longUrl, userID} : {shortId,longUrl}
+			});
 		console.log("Inserted into MongoDB:", result);
 		return `${urlShortenerConfig.baseUrl}${shortId}`;
 	} catch (error) {

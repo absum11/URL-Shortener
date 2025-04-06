@@ -4,7 +4,7 @@ const {
 } = require("../utils/validation.utils");
 
 const validateUrlMiddleware = (req, res, next) => {
-	if (isValidURL(req.body.url)) {
+	if (isValidURL(req.body.longUrl)) {
 		return next();
 	}
 
@@ -14,7 +14,7 @@ const validateUrlMiddleware = (req, res, next) => {
 };
 
 const blacklistedDomainMiddleware = (req, res, next) => {
-	if (isBlackListedDomain(req.body.url)) {
+	if (isBlackListedDomain(req.body.longUrl)) {
 		return res.status(403).json({
 			msg: "This domain is not allowed."
 		});

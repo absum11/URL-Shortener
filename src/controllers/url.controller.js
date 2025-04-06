@@ -4,14 +4,18 @@ const {
 } = require("../services/urlShorten.service");
 
 const urlShortenController = async (req, res) => {
-	const result = await urlShortenService(req.body.url);
+	const { longUrl } = req.body;
+	const userId = req.user?.userId;
+
+	const result = await urlShortenService(longUrl, userId);
 	console.log(result);
-	return res.status(200).json({
+	return res.status(201).json({
 		shortenedUrl: result
 	});
 };
 
 const urlRedirectController = async (req, res) => {
+	console.log(req.params.id);
 	const result = await urlRedirectService(req.params.id);
 	if (result === undefined) {
 		return res.status(404).json({
