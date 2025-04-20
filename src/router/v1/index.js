@@ -5,7 +5,6 @@ const {
 	newUserController,
 	loginController,
 } = require("../../controllers/auth.controller");
-const { urlRedirectController } = require("../../controllers/url.controller");
 const verifyTokenOptional = require("../../middlewares/verifyTokenOptional.middleware");
 const v1Router = express.Router();
 
@@ -27,7 +26,6 @@ v1Router.use("/user", userRouter);
 
 // public
 v1Router.use("/shorten", verifyTokenOptional ,urlRouter);
-// get source from shortened url requested
-v1Router.get("/:id", urlRedirectController);
+
 
 module.exports = v1Router;

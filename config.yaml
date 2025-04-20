@@ -15,7 +15,7 @@ url_shortener:
 
 cors:
   enabled: true
-  origin: "*" #specific origins when needed
+  origin: "http://localhost:5173" #specific origins when needed
   methods: "GET,POST,PUT,DELETE"
   headers: ["Content-Type", "Authorization"]
   credentials: true
