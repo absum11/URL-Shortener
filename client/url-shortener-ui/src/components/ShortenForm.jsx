@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "../api/axios"
 
 const ShortenForm = () => {
   const [url, setUrl] = useState("");
@@ -7,21 +8,11 @@ const ShortenForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:8080/v1/shorten", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ longUrl: url }),
-        credentials: "include", // becasue using cookies for auth
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        setShortened(data.shortenedUrl);
-      } else {
-        alert(data.error || "Something went wrong");
-      }
+      const res = await axios.post("/v1/shorten", { longUrl: url });
+      setShortened(res.data.shortenedUrl);
     } catch (err) {
       console.error("Error shortening URL", err);
+      alert(err.response?.data?.error || "Something went wrong");
     }
   };
 
